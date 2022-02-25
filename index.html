@@ -81,34 +81,43 @@
   <div class="article-inner">
     
     
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/02/25/%E5%BC%B1%E7%B1%BB%E5%9E%8B%E5%8F%8A%E5%93%88%E5%B8%8C%E7%BB%95%E8%BF%87/">弱类型及哈希绕过</a>
+    </h1>
+  
+
+      </header>
+    
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <hr>
-<h2 id="弱类型及哈希绕过"><a href="#弱类型及哈希绕过" class="headerlink" title="弱类型及哈希绕过"></a>弱类型及哈希绕过</h2><p>[TOC]</p>
-<h1 id="一、弱类型问题："><a href="#一、弱类型问题：" class="headerlink" title="一、弱类型问题："></a>一、弱类型问题：</h1><h3 id="1、弱类型问题："><a href="#1、弱类型问题：" class="headerlink" title="1、弱类型问题："></a>1、弱类型问题：</h3><h5 id="（1）直接输入0，判断是不是以字符开头："><a href="#（1）直接输入0，判断是不是以字符开头：" class="headerlink" title="（1）直接输入0，判断是不是以字符开头："></a>（1）直接输入0，判断是不是以<strong>字符</strong>开头：</h5><p><img src="C:\Users\hw\AppData\Roaming\Typora\typora-user-images\image-20220116161116104.png" alt="image-20220116161116104"></p>
+        <p>[TOC]</p>
+<h1 id="一、弱类型问题："><a href="#一、弱类型问题：" class="headerlink" title="一、弱类型问题："></a>一、弱类型问题：</h1><h3 id="1、弱类型问题："><a href="#1、弱类型问题：" class="headerlink" title="1、弱类型问题："></a>1、弱类型问题：</h3><h5 id="（1）直接输入0，判断是不是以字符开头："><a href="#（1）直接输入0，判断是不是以字符开头：" class="headerlink" title="（1）直接输入0，判断是不是以字符开头："></a>（1）直接输入0，判断是不是以<strong>字符</strong>开头：</h5><p><img src="img/image-20220116161116104.png" alt="image-20220116161116104"></p>
 <p>直接得出flag。</p>
-<h5 id="（2）若不是以字符开头："><a href="#（2）若不是以字符开头：" class="headerlink" title="（2）若不是以字符开头："></a>（2）若不是以字符开头：</h5><p><img src="C:\Users\hw\AppData\Roaming\Typora\typora-user-images\image-20220116161533662.png" alt="image-20220116161533662"></p>
+<h5 id="（2）若不是以字符开头："><a href="#（2）若不是以字符开头：" class="headerlink" title="（2）若不是以字符开头："></a>（2）若不是以字符开头：</h5><p><img src="img/image-20220116161533662.png" alt="image-20220116161533662"></p>
 <p>则需要写个脚本（0、1、2、3、4、 ·······），一点点的遍历它。</p>
-<h5 id="（3）判断表格："><a href="#（3）判断表格：" class="headerlink" title="（3）判断表格："></a>（3）判断表格：</h5><p><img src="C:\Users\hw\AppData\Roaming\Typora\typora-user-images\image-20220116162053501.png" alt="image-20220116162053501"></p>
-<h3 id="2、json-decode用法"><a href="#2、json-decode用法" class="headerlink" title="2、json_decode用法"></a>2、json_decode用法</h3><p><img src="C:\Users\hw\AppData\Roaming\Typora\typora-user-images\image-20220116155400168.png" alt="image-20220116155400168"></p>
-<p><img src="C:\Users\hw\AppData\Roaming\Typora\typora-user-images\image-20220116155419540.png" alt="image-20220116155419540"></p>
-<p><img src="C:\Users\hw\AppData\Roaming\Typora\typora-user-images\image-20220116155451224.png" alt="image-20220116155451224"></p>
-<p><img src="C:\Users\hw\AppData\Roaming\Typora\typora-user-images\image-20220116155511687.png" alt="image-20220116155511687"></p>
+<h5 id="（3）判断表格："><a href="#（3）判断表格：" class="headerlink" title="（3）判断表格："></a>（3）判断表格：</h5><p><img src="img/image-20220116162053501.png" alt="image-20220116162053501"></p>
+<h3 id="2、json-decode用法"><a href="#2、json-decode用法" class="headerlink" title="2、json_decode用法"></a>2、json_decode用法</h3><p><img src="img/image-20220116155400168.png" alt="image-20220116155400168"></p>
+<p><img src="img/image-20220116155419540.png" alt="image-20220116155419540"></p>
+<p><img src="img/image-20220116155451224.png" alt="image-20220116155451224"></p>
+<p><img src="img/image-20220116155511687.png" alt="image-20220116155511687"></p>
 <h1 id="二、哈希-md5-绕过问题："><a href="#二、哈希-md5-绕过问题：" class="headerlink" title="二、哈希(md5)绕过问题："></a>二、哈希(md5)绕过问题：</h1><h3 id="1、md5的三种最基本的题："><a href="#1、md5的三种最基本的题：" class="headerlink" title="1、md5的三种最基本的题："></a>1、md5的三种最基本的题：</h3><h5 id="（1）两个等号："><a href="#（1）两个等号：" class="headerlink" title="（1）两个等号："></a>（1）两个等号：</h5><p>哈希值相等，利用弱类型的科学记数法</p>
-<p><img src="C:\Users\hw\AppData\Roaming\Typora\typora-user-images\image-20220116162959551.png" alt="image-20220116162959551"></p>
+<p><img src="img/image-20220116162959551.png" alt="image-20220116162959551"></p>
 <h5 id="（2）强相等（三个等号）："><a href="#（2）强相等（三个等号）：" class="headerlink" title="（2）强相等（三个等号）："></a>（2）强相等（三个等号）：</h5><p><strong>利用md5输出数组为空</strong>，只要两个数组不一样即可。</p>
-<p><img src="C:\Users\hw\AppData\Roaming\Typora\typora-user-images\image-20220116163346775.png" alt="image-20220116163346775"></p>
+<p><img src="img/image-20220116163346775.png" alt="image-20220116163346775"></p>
 <h5 id="（3）md5碰撞："><a href="#（3）md5碰撞：" class="headerlink" title="（3）md5碰撞："></a>（3）md5碰撞：</h5><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_45897324/article/details/108961503">https://blog.csdn.net/weixin_45897324/article/details/108961503</a></p>
-<p><img src="C:\Users\hw\AppData\Roaming\Typora\typora-user-images\image-20220116163742675.png" alt="image-20220116163742675"></p>
+<p><img src="img/image-20220116163742675.png" alt="image-20220116163742675"></p>
 <h3 id="2、0e开头的md5"><a href="#2、0e开头的md5" class="headerlink" title="2、0e开头的md5"></a>2、0e开头的md5</h3><p>PHP在处理哈希字符串时，会利用”!=”或”==”来对哈希值进行比较，它把每一个以”0E”开头的哈希值都解释为0，所以如果两个不同的密码经过哈希以后，其哈希值都是以”0E”开头的，那么PHP将会认为他们相同，都是0。</p>
 <p>攻击者可以利用这一漏洞，通过输入一个经过哈希后以”0E”开头的字符串，即会被PHP解释为0，如果数据库中存在这种哈希值以”0E”开头的密码的话，他就可以以这个用户的身份登录进去，尽管并没有真正的密码。</p>
 <p>原值 和 他0e开头的md5:</p>
-<p><img src="C:\Users\hw\AppData\Roaming\Typora\typora-user-images\image-20220116210644899.png" alt="image-20220116210644899"></p>
+<p><img src="img/image-20220116210644899.png" alt="image-20220116210644899"></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2022/02/25/%E5%BC%B1%E7%B1%BB%E5%9E%8B%E5%8F%8A%E5%93%88%E5%B8%8C%E7%BB%95%E8%BF%87/" data-id="cl027ufrn00008sv1hyc50xng" data-title="" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2022/02/25/%E5%BC%B1%E7%B1%BB%E5%9E%8B%E5%8F%8A%E5%93%88%E5%B8%8C%E7%BB%95%E8%BF%87/" data-id="cl027ufrn00008sv1hyc50xng" data-title="弱类型及哈希绕过" class="article-share-link">Share</a>
       
       
       
@@ -423,7 +432,7 @@
       <ul>
         
           <li>
-            <a href="/2022/02/25/%E5%BC%B1%E7%B1%BB%E5%9E%8B%E5%8F%8A%E5%93%88%E5%B8%8C%E7%BB%95%E8%BF%87/">(no title)</a>
+            <a href="/2022/02/25/%E5%BC%B1%E7%B1%BB%E5%9E%8B%E5%8F%8A%E5%93%88%E5%B8%8C%E7%BB%95%E8%BF%87/">弱类型及哈希绕过</a>
           </li>
         
           <li>
