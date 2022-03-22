@@ -71,6 +71,171 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-08延时盲注a报错注入" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/03/19/08%E5%BB%B6%E6%97%B6%E7%9B%B2%E6%B3%A8a%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/" class="article-date">
+  <time class="dt-published" datetime="2022-03-19T12:36:20.000Z" itemprop="datePublished">2022-03-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/03/19/08%E5%BB%B6%E6%97%B6%E7%9B%B2%E6%B3%A8a%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/">延时盲注a报错注入</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+       
+        <h1 id="一、延时盲注（时间盲注）"><a href="#一、延时盲注（时间盲注）" class="headerlink" title="一、延时盲注（时间盲注）"></a>一、延时盲注（时间盲注）</h1><h2 id="1、时间盲注"><a href="#1、时间盲注" class="headerlink" title="1、时间盲注"></a>1、时间盲注</h2><p>（1）没有回显，只能根据sleep时间来判断正确与否</p>
+<p>（2）当然有回显当然也能用，甚至union select直接查出数据时都也能用，就是没必要。</p>
+<p>（3）常用条件+sleep()</p>
+<h2 id="2、sleep-函数"><a href="#2、sleep-函数" class="headerlink" title="2、sleep()函数"></a>2、sleep()函数</h2><p>（1）eg：select if((1=1),  sleep(5), 0);</p>
+<p><img src="/2022/03/19/08%E5%BB%B6%E6%97%B6%E7%9B%B2%E6%B3%A8a%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/01.png" alt="01"></p>
+<p>（2）不依赖于 if或者是case</p>
+<p>eg：select sleep(10*(1=1));</p>
+<p><img src="/2022/03/19/08%E5%BB%B6%E6%97%B6%E7%9B%B2%E6%B3%A8a%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/02.png" alt="02"></p>
+<h2 id="3、优势"><a href="#3、优势" class="headerlink" title="3、优势"></a>3、优势</h2><p>（1）对比于布尔盲注，不需要它的回显了，只需要时间的变化即可。</p>
+<p>（2）布尔盲注的题也可以用时间回显来做。</p>
+<p>（3）union、select的题也可以用时间盲注来做，只不过不是最优解法。</p>
+<h2 id="4、利用python写代码"><a href="#4、利用python写代码" class="headerlink" title="4、利用python写代码"></a>4、利用python写代码</h2><p><strong>注：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload = f&quot;2019122001&#x27; and sleep(500*(&#123;condition&#125;))%23&quot;</span><br></pre></td></tr></table></figure>
+
+<p>字符串前加一个f是为了可以使后面“{}”中的内容表示出来。</p>
+<p>（1）最初脚本</p>
+<p>核心部分：</p>
+<p><img src="/2022/03/19/08%E5%BB%B6%E6%97%B6%E7%9B%B2%E6%B3%A8a%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/03.png" alt="03"></p>
+<p>结果：</p>
+<p><img src="/2022/03/19/08%E5%BB%B6%E6%97%B6%E7%9B%B2%E6%B3%A8a%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/04.png" alt="04"></p>
+<p>（2）问题及其修改</p>
+<p>问题：利用time()函数，sleep的时间不确定，可能会花费大量的时间。</p>
+<p><img src="/2022/03/19/08%E5%BB%B6%E6%97%B6%E7%9B%B2%E6%B3%A8a%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/05.png" alt="05"></p>
+<p>修改后的代码：</p>
+<p><img src="/2022/03/19/08%E5%BB%B6%E6%97%B6%E7%9B%B2%E6%B3%A8a%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/06.png" alt="06"></p>
+<p><strong>利用try和except，用timeout设置3秒超时</strong>，无论sleep了多久或者运行到一半出错了，时间一到，直接进行下一个。</p>
+<h2 id="5、如果sleep被过滤了该咋办？"><a href="#5、如果sleep被过滤了该咋办？" class="headerlink" title="5、如果sleep被过滤了该咋办？"></a>5、如果sleep被过滤了该咋办？</h2><p>Ps：mysql中只有sleep()这一个延时函数。</p>
+<h4 id="（1）benchmark-函数"><a href="#（1）benchmark-函数" class="headerlink" title="（1）benchmark()函数"></a>（1）benchmark()函数</h4><p>1）MySQL有一个内置的benchmark()函数，可以测试某些特定操作的执行速度。</p>
+<p>eg：通过以下测试可知md5()函数比sha1()函数要快。</p>
+<p><img src="/2022/03/19/08%E5%BB%B6%E6%97%B6%E7%9B%B2%E6%B3%A8a%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/07.png" alt="07"></p>
+<p>2）通过测试知1000000次sha1要0.65秒，10000000次的sha1要6.3秒，大致是成倍数增加。</p>
+<p><img src="/2022/03/19/08%E5%BB%B6%E6%97%B6%E7%9B%B2%E6%B3%A8a%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/08.png" alt="08"></p>
+<p>3）利用benchmark写脚本：</p>
+<p><strong>注：</strong>（1）benchmark(1000000, sha1(‘aaaa’))的时间为0.6秒，所以30000000次3的时间为18秒，远大于3秒。</p>
+<p>（2）sleep函数的格式为:sleep(x * ( )),而benchmark的函数格式为:<strong>benchmark(x * ( ), sha1(‘aaaa’))</strong>,利用的是<strong>测试运行速度</strong>。</p>
+<p><img src="/2022/03/19/08%E5%BB%B6%E6%97%B6%E7%9B%B2%E6%B3%A8a%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/09.png" alt="09"></p>
+<h4 id="（2）笛卡尔积"><a href="#（2）笛卡尔积" class="headerlink" title="（2）笛卡尔积"></a>（2）笛卡尔积</h4><p>这种方法又叫做heavy query，可以通过选定<strong>一个大表</strong>来做笛卡儿积，但这种方式执行时间会几何倍数的提升，在站比较大的情况下会造成几何倍数的效果，实际利用起来非常不好用</p>
+<p><img src="/2022/03/19/08%E5%BB%B6%E6%97%B6%E7%9B%B2%E6%B3%A8a%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/10.png" alt="10"></p>
+<h4 id="（3）get-lock-和-正则表达式"><a href="#（3）get-lock-和-正则表达式" class="headerlink" title="（3）get_lock 和 正则表达式"></a>（3）get_lock 和 正则表达式</h4><h1 id="二、报错注入"><a href="#二、报错注入" class="headerlink" title="二、报错注入"></a>二、报错注入</h1><p><strong>注：有回显的注入，和报错盲注不一样。</strong></p>
+<h2 id="1、概念"><a href="#1、概念" class="headerlink" title="1、概念"></a>1、概念</h2><p>（1）报错注入在没法用union联合查询时用，但前提还是不能过滤一些关键的函数。</p>
+<p>（2）报错注入就是利用了数据库的某些机制，<strong>人为地</strong>制造错误条件，<strong>使得查询结果能够出现在错误信息中</strong>，而报错盲注只告诉我们出错了，但是不知道错在哪里。</p>
+<h2 id="2、函数利用"><a href="#2、函数利用" class="headerlink" title="2、函数利用"></a>2、函数利用</h2><h4 id="（1）Updatexml"><a href="#（1）Updatexml" class="headerlink" title="（1）Updatexml()"></a>（1）Updatexml()</h4><p>函数语法：updatexml(XML_document, XPath_string,new_value);</p>
+<p>第一个参数为XML<strong>文档对象的名称</strong>，第二个为Xpath格式的<strong>字符串</strong>，第三个为<strong>String格式</strong>，<strong>替换</strong>查找到的符合条件的<strong>数据</strong>。</p>
+<p>作用：改变文档中符合条件的节点的值。</p>
+<p><img src="/2022/03/19/08%E5%BB%B6%E6%97%B6%E7%9B%B2%E6%B3%A8a%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/11.png" alt="11"></p>
+<p><strong>注：（1）0x7e表示的是“<del>”，Xpath格式的字符串没有左右都是“</del>”的情况，所以输出的肯定是会报错的。</strong></p>
+<p>（2）看不全时的截取：</p>
+<p><strong>利用substr()函数</strong>进行截取</p>
+<p>2019122001’ and updatexml(1, concat(0x7e, (substr((select group_concat(card_passwd) from teacher), 20)), 0x7e), 1)%23</p>
+<h4 id="（2）extractvalue"><a href="#（2）extractvalue" class="headerlink" title="（2）extractvalue()"></a>（2）extractvalue()</h4><p>函数语法：EXTRACTVALUE (XML_document, XPath_string);</p>
+<p>利用原理和updatexml函数相同，主要是少了第三个参数。</p>
+<p><strong>payload</strong>: extractvalue(1,concat(0x7e,(select user()),0x7e))</p>
+<p><img src="/2022/03/19/08%E5%BB%B6%E6%97%B6%E7%9B%B2%E6%B3%A8a%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/12.png" alt="12"></p>
+<h4 id="（3）rand-group-count"><a href="#（3）rand-group-count" class="headerlink" title="（3）rand()+group()+count()"></a>（3）rand()+group()+count()</h4><p>虚拟表报错</p>
+<h4 id="（4）几何函数"><a href="#（4）几何函数" class="headerlink" title="（4）几何函数"></a>（4）几何函数</h4><h4 id="（5）name-const"><a href="#（5）name-const" class="headerlink" title="（5）name_const()"></a>（5）name_const()</h4><p>仅可取数据库版本信息</p>
+<p>select * from(select name_const(version(),0x1),name_const(version(),0x1))a;</p>
+<p><img src="/2022/03/19/08%E5%BB%B6%E6%97%B6%E7%9B%B2%E6%B3%A8a%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/13.png" alt="13"></p>
+<h4 id="（6）uuid相关函数"><a href="#（6）uuid相关函数" class="headerlink" title="（6）uuid相关函数"></a>（6）uuid相关函数</h4><p>适用版本：<strong>8.0.x</strong></p>
+<p>mysql&gt; SELECT UUID_TO_BIN((SELECT password FROM users WHERE<br>id=1));</p>
+<p>mysql&gt; SELECT BIN_TO_UUID((SELECT password FROM users WHERE<br>id=1));</p>
+<h4 id="（7）GTID-相关函数"><a href="#（7）GTID-相关函数" class="headerlink" title="（7）GTID 相关函数"></a>（7）GTID 相关函数</h4><p>mysql&gt;select gtid_subset(user(),1);<br>mysql&gt;select gtid_subset(hex(substr((select * from users limit<br>1,1),1,1)),1);<br>mysql&gt;select gtid_subtract((select * from(select user())a),1);</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/03/19/08%E5%BB%B6%E6%97%B6%E7%9B%B2%E6%B3%A8a%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/" data-id="cl10qcekf000084v1df8dg9kl" data-title="延时盲注a报错注入" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+
+  
+    <article id="post-07布尔盲注" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/03/10/07%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8/" class="article-date">
+  <time class="dt-published" datetime="2022-03-10T08:32:34.000Z" itemprop="datePublished">2022-03-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/03/10/07%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8/">布尔盲注</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+       
+        <h1 id="一、初始盲注"><a href="#一、初始盲注" class="headerlink" title="一、初始盲注"></a>一、初始盲注</h1><h2 id="1、SQL注入的类型"><a href="#1、SQL注入的类型" class="headerlink" title="1、SQL注入的类型"></a>1、SQL注入的类型</h2><p>按回显方式划分：</p>
+<h4 id="1-有回显："><a href="#1-有回显：" class="headerlink" title="(1)有回显："></a>(1)有回显：</h4><p>  联合注入 -&gt; 构造联合查询语句，直接查看结果</p>
+<p>  报错注入 -&gt; 构造报错语句，在报错中查看结果</p>
+<p>  堆查询 -&gt; 多行语句执行，进而实现想要达到的目的</p>
+<h4 id="2-无回显："><a href="#2-无回显：" class="headerlink" title="(2)无回显："></a>(2)无回显：</h4><p>  <strong>盲注</strong> -&gt; 布尔型/时间型，通过某种手段“爆破”结果</p>
+<h2 id="2、盲注分类"><a href="#2、盲注分类" class="headerlink" title="2、盲注分类"></a>2、盲注分类</h2><h4 id="（1）布尔盲注-回显不同"><a href="#（1）布尔盲注-回显不同" class="headerlink" title="（1）布尔盲注-回显不同"></a>（1）布尔盲注-回显不同</h4><h4 id="（2）时间盲注-响应时间不同"><a href="#（2）时间盲注-响应时间不同" class="headerlink" title="（2）时间盲注-响应时间不同"></a>（2）时间盲注-响应时间不同</h4><p>布尔状态例如：<br>1）回显不同（内容、长度）</p>
+<p>2）HTTP响应状态码不同（200、500）</p>
+<p>3）HTTP响应头变化（无条件重定向、设置cookie)</p>
+<p>4)基于错误的布尔注入（MySQL是否报错）</p>
+<h1 id="二、盲注的两大基本问题"><a href="#二、盲注的两大基本问题" class="headerlink" title="二、盲注的两大基本问题"></a>二、盲注的两大基本问题</h1><h2 id="1、字符串的截取"><a href="#1、字符串的截取" class="headerlink" title="1、字符串的截取"></a>1、字符串的截取</h2><h4 id="（1）substr-、substring"><a href="#（1）substr-、substring" class="headerlink" title="（1）substr()、substring()"></a>（1）substr()、substring()</h4><p>1）substr(str, pos)：截取从pos位置开始到最后的所有</p>
+<p>substr(str, pos, len)：截取从pos位置开始到最后的len个</p>
+<p>eg:  select * from users where id = ‘1’ and substr((select database()),2,1) = ‘a’</p>
+<p>2）过滤了逗号怎么办？就不能多个参数了吗？</p>
+<p>select substr(“2022-3-13”, 6, 5);和select substr(“2022-3-13” from 6 for 5);</p>
+<p><strong>意思相同</strong></p>
+<h4 id="（2）mid"><a href="#（2）mid" class="headerlink" title="（2）mid()"></a>（2）mid()</h4><p>SQL MID() 函数用于得到一个字符串的一部分。这个函数被MySQL支持，但不被MS SQL Server和Oracle支持。在SQL Server， Oracle 数据库中，我们可以使用 SQL SUBSTRING函数或者 SQL SUBSTR函数作为替代。<br>在mysql里和substr()基本一样~~<strong>（用法相同）</strong></p>
+<h4 id="（3）right-、left"><a href="#（3）right-、left" class="headerlink" title="（3）right()、left()"></a>（3）right()、left()</h4><h5 id="1）用法："><a href="#1）用法：" class="headerlink" title="1）用法："></a>1）用法：</h5><p>right(‘abc’, 2); 的运行结果为bc</p>
+<p>left(‘abc’, 2); 的运行结果为ab</p>
+<h5 id="2）结合ascii"><a href="#2）结合ascii" class="headerlink" title="2）结合ascii()"></a>2）结合ascii()</h5><p>ascii(‘str’) 返回字符串的第一个字符的ascii码，<strong>能用ascii时尽量用ascii!</strong> 因为字符的比较可能因为字符比较特殊(比如是单引号)而出现很多问题，但是ascii直接转成数字，就解决了这个问题！</p>
+<p><strong>注：ascii的同名函数是ord 用于过滤ascii的过滤！！</strong></p>
+<h4 id="（4）trim"><a href="#（4）trim" class="headerlink" title="（4）trim()"></a>（4）trim()</h4><h5 id="1）删除空格"><a href="#1）删除空格" class="headerlink" title="1）删除空格"></a>1）删除空格</h5><p>TRIM() # 删除前后空格<br>RTRIM() # 删除字符串结尾空格<br>LTRIM() # 删除字符串起始空格</p>
+<p><img src="/2022/03/10/07%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8/01.png" alt="01"></p>
+<h5 id="2）删除首和尾、首、尾字母"><a href="#2）删除首和尾、首、尾字母" class="headerlink" title="2）删除首和尾、首、尾字母"></a>2）删除首和尾、首、尾字母</h5><p>trim([BOTH/LEADING/TRAILING]) 目标字符串 from 源字符串);</p>
+<p><img src="/2022/03/10/07%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8/02.png" alt="02"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2022/03/10/07%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8/" data-id="cl0p09bbj0000nwv17qqkh9d5" data-title="布尔盲注" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+
+  
     <article id="post-06文件堆叠宽字节" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2022/03/05/06%E6%96%87%E4%BB%B6%E5%A0%86%E5%8F%A0%E5%AE%BD%E5%AD%97%E8%8A%82/" class="article-date">
@@ -642,6 +807,14 @@
       <ul>
         
           <li>
+            <a href="/2022/03/19/08%E5%BB%B6%E6%97%B6%E7%9B%B2%E6%B3%A8a%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5/">延时盲注a报错注入</a>
+          </li>
+        
+          <li>
+            <a href="/2022/03/10/07%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8/">布尔盲注</a>
+          </li>
+        
+          <li>
             <a href="/2022/03/05/06%E6%96%87%E4%BB%B6%E5%A0%86%E5%8F%A0%E5%AE%BD%E5%AD%97%E8%8A%82/">文件堆叠宽字节</a>
           </li>
         
@@ -651,14 +824,6 @@
         
           <li>
             <a href="/2022/03/05/04hexo%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87/">hexo上传图片</a>
-          </li>
-        
-          <li>
-            <a href="/2022/03/04/dvwa/">dvwa</a>
-          </li>
-        
-          <li>
-            <a href="/2022/03/04/%E5%BC%B1%E7%B1%BB%E5%9E%8B%E5%8F%8A%E5%93%88%E5%B8%8C%E7%BB%95%E8%BF%87/">弱类型及哈希绕过</a>
           </li>
         
       </ul>
